@@ -180,10 +180,12 @@ void loop(){
       servo.write(0);
       servoStartMillis = millis();
       isWateringA = false;
+      servoPos = 0;
     }else if(isWateringB && currentMillis - servoStartMillis >= servoDelay){
       servo.write(180);
       servoStartMillis = millis();
       isWateringB = false;
+      servoPos = 1;
     }
 
     if(currentMillis - previousMillis >= pumpDuration){
