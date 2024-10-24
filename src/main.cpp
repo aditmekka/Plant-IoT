@@ -60,8 +60,11 @@ void setup(){
   Serial.print("Connecting to WiFi");
   while(WiFi.status() != WL_CONNECTED){
     Serial.print(".");
-    digitalWrite(LED_BUILTIN, LOW);
+    digitalWrite(LED_BUILTIN, HIGH);
     delay(300);
+  }
+  if(WiFi.status() == WL_CONNECTED){
+    digitalWrite(LED_BUILTIN, LOW);
   }
   Serial.println();
   Serial.print("Connected with IP: ");
@@ -172,20 +175,20 @@ void loop(){
     waterPlantA();
   }else if(humidityValB < moistureTreshold){
     waterPlantB();
+  }else{
+    pump(pumpStatus);
   }
 
   if(isWateringA || isWateringB){
     unsigned long currentMillis = millis();
     if(isWateringA && currentMillis - servoStartMillis >= servoDelay){
-      servo.write(0);
+      servoPos = 0;
       servoStartMillis = millis();
       isWateringA = false;
-      servoPos = 0;
     }else if(isWateringB && currentMillis - servoStartMillis >= servoDelay){
-      servo.write(180);
+      servoPos = 1;
       servoStartMillis = millis();
       isWateringB = false;
-      servoPos = 1;
     }
 
     if(currentMillis - previousMillis >= pumpDuration){
@@ -214,6 +217,7 @@ void serialDebug(){
 }
 
 void waterPlantA(){
+  servoPos = 0;
   servoStartMillis = millis();
   isWateringA = true;
   pump(true);
@@ -221,6 +225,7 @@ void waterPlantA(){
 }
 
 void waterPlantB(){
+  servoPos = 1;
   servoStartMillis = millis();
   isWateringB = true;
   pump(true);
